@@ -337,6 +337,37 @@ describe("nodes camera_clip", () => {
 });
 
 describe("nodes photos_latest", () => {
+  it("returns empty content/details when no photos are available", async () => {
+    setupNodeInvokeMock({
+      onInvoke: (invokeParams) => {
+        expect(invokeParams).toMatchObject({
+          command: "photos.latest",
+          params: {
+            limit: 1,
+            maxWidth: 1600,
+            quality: 0.85,
+          },
+        });
+        return {
+          payload: {
+            photos: [],
+          },
+        };
+      },
+    });
+
+    const result = await executeNodes(
+      {
+        action: "photos_latest",
+        node: NODE_ID,
+      },
+      { modelHasVision: false },
+    );
+
+    expect(result.content ?? []).toEqual([]);
+    expect(result.details).toEqual([]);
+  });
+
   it("returns MEDIA paths and no inline images when model has no vision", async () => {
     setupNodeInvokeMock({
       remoteIp: "198.51.100.42",

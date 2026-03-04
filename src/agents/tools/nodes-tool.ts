@@ -363,7 +363,15 @@ export function createNodesTool(options?: {
             const photos = Array.isArray(payload.photos) ? payload.photos : [];
 
             if (photos.length === 0) {
-              return jsonResult({ photos: [] });
+              const result: AgentToolResult<unknown> = {
+                content: [],
+                details: [],
+              };
+              return await sanitizeToolResultImages(
+                result,
+                "nodes:photos_latest",
+                imageSanitization,
+              );
             }
 
             const content: AgentToolResult<unknown>["content"] = [];
