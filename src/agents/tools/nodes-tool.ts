@@ -59,7 +59,6 @@ const CAMERA_FACING = ["front", "back", "both"] as const;
 const LOCATION_ACCURACY = ["coarse", "balanced", "precise"] as const;
 const MEDIA_INVOKE_ACTIONS = {
   "camera.snap": "camera_snap",
-  "camera.list": "camera_list",
   "camera.clip": "camera_clip",
   "photos.latest": "photos_latest",
   "screen.record": "screen_record",

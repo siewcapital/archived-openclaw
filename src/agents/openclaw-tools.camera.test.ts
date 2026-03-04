@@ -666,6 +666,34 @@ describe("nodes run", () => {
 });
 
 describe("nodes invoke", () => {
+  it("allows metadata-only camera.list via generic invoke", async () => {
+    setupNodeInvokeMock({
+      onInvoke: (invokeParams) => {
+        expect(invokeParams).toMatchObject({
+          command: "camera.list",
+          params: {},
+        });
+        return {
+          payload: {
+            devices: [{ id: "cam-back", name: "Back Camera" }],
+          },
+        };
+      },
+    });
+
+    const result = await executeNodes({
+      action: "invoke",
+      node: NODE_ID,
+      invokeCommand: "camera.list",
+    });
+
+    expect(result.details).toMatchObject({
+      payload: {
+        devices: [{ id: "cam-back", name: "Back Camera" }],
+      },
+    });
+  });
+
   it("blocks media invoke commands to avoid base64 context bloat", async () => {
     await expect(
       executeNodes({
