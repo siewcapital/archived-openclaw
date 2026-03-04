@@ -416,6 +416,48 @@ describe("nodes photos_latest", () => {
       createdAt: "2026-03-04T00:00:00Z",
     });
   });
+
+  it("includes inline image blocks when model has vision", async () => {
+    setupNodeInvokeMock({
+      onInvoke: (invokeParams) => {
+        expect(invokeParams).toMatchObject({
+          command: "photos.latest",
+          params: {
+            limit: 1,
+            maxWidth: 1600,
+            quality: 0.85,
+          },
+        });
+        return {
+          payload: {
+            photos: [
+              {
+                format: "jpeg",
+                base64: "aGVsbG8=",
+                width: 1,
+                height: 1,
+                createdAt: "2026-03-04T00:00:00Z",
+              },
+            ],
+          },
+        };
+      },
+    });
+
+    const result = await executeNodes(
+      {
+        action: "photos_latest",
+        node: NODE_ID,
+      },
+      { modelHasVision: true },
+    );
+
+    expect(result.content?.[0]).toMatchObject({
+      type: "text",
+      text: expect.stringMatching(/^MEDIA:/),
+    });
+    expectSingleImage(result, { mimeType: "image/jpeg" });
+  });
 });
 
 describe("nodes notifications_list", () => {
